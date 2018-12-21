@@ -1,5 +1,5 @@
 <template>
-	<div class="quick-menu" ref="quickMenu" :style="quickMenuStyle">
+    <div class="quick-menu" ref="quickMenu" :style="quickMenuStyle">
     <div v-for="(n,key) in menuCount" class="sub-menu" :style="getSubMenu(n-1)">
         <router-link v-if="menuUrlList[n-1].isLink" :to="menuUrlList[n-1].url" :target="openNewTab" :style="subMenuStyle" @mouseover.stop="mouseEnterSubMenu" @mouseout.stop="mouseOutSubMenu">
           <i :class="iconClass[n-1]" ref="icon"></i>
@@ -18,157 +18,158 @@
     </div>
 </template>
 <script>
-	export default{
-name:'quickMenu',
-  props:{
-    menuCount:{
-      type: Number,
-      required: true,
-      default:4
+export default {
+    name: 'quickMenu',
+    props: {
+        menuCount: {
+            type: Number,
+            required: true,
+            default: 4,
+        },
+        iconClass: {
+            type: Array,
+            required: true,
+        },
+        menuUrlList: {
+            type: Array,
+            required: true,
+        },
+        backgroundColor: {
+            type: String,
+            default: '#20babb',
+        },
+        color: {
+            type: String,
+            default: '#fff',
+        },
+        isOpenNewTab: {
+            type: Boolean,
+            default: false,
+        },
+        position: {
+            type: String,
+            default: 'top-left',
+        },
     },
-    iconClass:{
-      type:Array,
-      required: true
-    },
-    menuUrlList:{
-      type:Array,
-      required: true
-    },
-    backgroundColor:{
-      type:String,
-      default:'#20babb'
-    },
-    color:{
-      type:String,
-      default:'#fff'
-    },
-    isOpenNewTab:{
-      type:Boolean,
-      default:false
-    },
-    position:{
-      type:String,
-      default:'top-left'
-    }
-  },
-  computed:{
-    openNewTab(){
-      return this.isOpenNewTab?'_blank':'_self'
-    },
-    quickMenuStyle(){
-      const topPosition = {top:'30px'}, 
-      bottomPosition={bottom:'30px'},
-      leftPosition = {left:'30px'},
-      rightPosition = {right:'30px'}
+    computed: {
+        openNewTab() {
+            return this.isOpenNewTab ? '_blank' : '_self';
+        },
+        quickMenuStyle() {
+            const topPosition = { top: '30px' };
 
-      let style = this.isTop?topPosition:bottomPosition
-      Object.assign(style, this.isLeft?leftPosition:rightPosition)
-      Object.assign(style,{transform: this.isLeft?"rotate(-180deg)":"rotate(180deg)"})
-      return style
-    },
-    menuStyle(){
-      return {
-        backgroundColor: this.backgroundColor,
-        color: this.color
-      }
-    },
-    subMenuStyle(){
-      const style = {
-        backgroundColor: this.backgroundColor,
-        color: this.color
-      }
-      return style
-    },
-   
-    isTop(){
-      return !!~this.position.toLowerCase().indexOf('top')
-    },
-    isLeft(){
-      return !!~this.position.toLowerCase().indexOf('left')
-    }
-  },
-  data(){
-    return{
-      menuSize:60,
-      subMenu4:[[["0","-160"],["-80","-138.6"],["-138.6","-80"],["-160","0"]],[["0","-160"],["80", "-138.6"],["138.6","-80"],["160","0"]],[["0","160"],["138.6","80"],["80","138.6"],["160","0"]],[["-160","0"],["-138.6","80"],["-80","138.6"],["0","160"]]],
-      subMenu3:[[["-160","0"],["-113","-113"],["0","-160"]],[["0","-160"],["113","-113"],["160","0"]],[["0","160"],["113","113"],["160","0"]],[["-160","0"],["-113","113"],["0","160"]]],
-      subMenu2:[[["-160","0"],["0","-160"]],[["0","-160"],["160","0"]],[["0","160"],["160","0"]],[["-160","0"],["0","160"]]]
-    }
-  },
-  methods:{
-    getSubMenu(n){
-      let menuPosition = this.menuCount===4?this.subMenu4:this.menuCount===3?this.subMenu3:this.subMenu2
-      menuPosition = this.isTop&&this.isLeft?menuPosition[2]:this.isTop&&!this.isLeft?menuPosition[1]:!this.isTop&&this.isLeft?menuPosition[3]:menuPosition[0]
-      return {top:menuPosition[n][0]+'px',left:menuPosition[n][1]+'px'}
-    },
-    toggleMenu(e){
-      let menuEl = this.$refs.quickMenu
-      let menuIconEl = this.$refs.icon
-      if(!~menuEl.className.indexOf(' active')){
-         menuEl.className += ' active';
-        menuIconEl.forEach( function(element, index) {
-          element.className += ' menu-animate';
-        });
-      } else {
-        menuEl.className = menuEl.className.replace(' active','')
-        menuIconEl.forEach( function(element, index) {
-        element.className = element.className.replace(' menu-animate','')
-        });
-      }
-      
-    },
-    processCallback(key){
-      console.log(key)
-      this.$emit('process',key)
-    },
-    mouseEnterSubMenu(e){
-      if(e.target.tagName==='A'){
-        e.target.style.backgroundColor = this.lightenColor(this.backgroundColor, 20)
-        // e.target.firstElementChild.style.backgroundColor = this.lightenColor(this.backgroundColor, 20)
-      } else if(e.target.tagName==='I'){
-        e.target.parentElement.style.backgroundColor = this.lightenColor(this.backgroundColor, 20)
-        // e.target.style.backgroundColor = this.lightenColor(this.backgroundColor, 20)
-      }
-      
-    },
-    mouseOutSubMenu(e){
-      if(e.target.tagName==='A'){
-        e.target.style.backgroundColor = this.backgroundColor
-        // e.target.firstElementChild.style.backgroundColor = this.backgroundColor
-      }else if(e.target.tagName==='I'){
-        e.target.parentElement.style.backgroundColor = this.backgroundColor
-        // e.target.style.backgroundColor = this.backgroundColor
-      }
-      
-    },
-    lightenColor (hex, amt) {
 
-      var usePound = false
+            const bottomPosition = { bottom: '30px' };
 
-      if (hex[0] === '#') {
-        hex = hex.slice(1)
-        usePound = true
-      }
 
-      var num = parseInt(hex, 16)
-      var r = (num >> 16) + amt
+            const leftPosition = { left: '30px' };
 
-      if (r > 255) r = 255
-      else if (r < 0) r = 0
 
-          var b = ((num >> 8) & 0x00FF) + amt
+            const rightPosition = { right: '30px' };
 
-      if (b > 255) b = 255
-      else if (b < 0) b = 0
+            const style = this.isTop ? topPosition : bottomPosition;
+            Object.assign(style, this.isLeft ? leftPosition : rightPosition);
+            Object.assign(style, { transform: this.isLeft ? 'rotate(-180deg)' : 'rotate(180deg)' });
+            return style;
+        },
+        menuStyle() {
+            return {
+                backgroundColor: this.backgroundColor,
+                color: this.color,
+            };
+        },
+        subMenuStyle() {
+            const style = {
+                backgroundColor: this.backgroundColor,
+                color: this.color,
+            };
+            return style;
+        },
 
-      var g = (num & 0x0000FF) + amt
+        isTop() {
+            return !!~this.position.toLowerCase().indexOf('top');
+        },
+        isLeft() {
+            return !!~this.position.toLowerCase().indexOf('left');
+        },
+    },
+    data() {
+        return {
+            menuSize: 60,
+            subMenu4: [[['0', '-160'], ['-80', '-138.6'], ['-138.6', '-80'], ['-160', '0']], [['0', '-160'], ['80', '-138.6'], ['138.6', '-80'], ['160', '0']], [['0', '160'], ['138.6', '80'], ['80', '138.6'], ['160', '0']], [['-160', '0'], ['-138.6', '80'], ['-80', '138.6'], ['0', '160']]],
+            subMenu3: [[['-160', '0'], ['-113', '-113'], ['0', '-160']], [['0', '-160'], ['113', '-113'], ['160', '0']], [['0', '160'], ['113', '113'], ['160', '0']], [['-160', '0'], ['-113', '113'], ['0', '160']]],
+            subMenu2: [[['-160', '0'], ['0', '-160']], [['0', '-160'], ['160', '0']], [['0', '160'], ['160', '0']], [['-160', '0'], ['0', '160']]],
+        };
+    },
+    methods: {
+        getSubMenu(n) {
+            let menuPosition = this.menuCount === 4 ? this.subMenu4 : this.menuCount === 3 ? this.subMenu3 : this.subMenu2;
+            menuPosition = this.isTop && this.isLeft ? menuPosition[2] : this.isTop && !this.isLeft ? menuPosition[1] : !this.isTop && this.isLeft ? menuPosition[3] : menuPosition[0];
+            return { top: `${menuPosition[n][0]}px`, left: `${menuPosition[n][1]}px` };
+        },
+        toggleMenu(e) {
+            const menuEl = this.$refs.quickMenu;
+            const menuIconEl = this.$refs.icon;
+            if (!~menuEl.className.indexOf(' active')) {
+                menuEl.className += ' active';
+                menuIconEl.forEach((element, index) => {
+                    element.className += ' menu-animate';
+                });
+            } else {
+                menuEl.className = menuEl.className.replace(' active', '');
+                menuIconEl.forEach((element, index) => {
+                    element.className = element.className.replace(' menu-animate', '');
+                });
+            }
+        },
+        processCallback(key) {
+            this.$emit('process', key);
+        },
+        mouseEnterSubMenu(e) {
+            if (e.target.tagName === 'A') {
+                e.target.style.backgroundColor = this.lightenColor(this.backgroundColor, 20);
+                // e.target.firstElementChild.style.backgroundColor = this.lightenColor(this.backgroundColor, 20)
+            } else if (e.target.tagName === 'I') {
+                e.target.parentElement.style.backgroundColor = this.lightenColor(this.backgroundColor, 20);
+                // e.target.style.backgroundColor = this.lightenColor(this.backgroundColor, 20)
+            }
+        },
+        mouseOutSubMenu(e) {
+            if (e.target.tagName === 'A') {
+                e.target.style.backgroundColor = this.backgroundColor;
+                // e.target.firstElementChild.style.backgroundColor = this.backgroundColor
+            } else if (e.target.tagName === 'I') {
+                e.target.parentElement.style.backgroundColor = this.backgroundColor;
+                // e.target.style.backgroundColor = this.backgroundColor
+            }
+        },
+        lightenColor(hex, amt) {
+            let usePound = false;
 
-      if (g > 255) g = 255
-      else if (g < 0) g = 0
-      return (usePound ? '#' : '') + (g | (b << 8) | (r << 16)).toString(16)
-    }
-  }
-	}
+            if (hex[0] === '#') {
+                hex = hex.slice(1);
+                usePound = true;
+            }
+
+            const num = parseInt(hex, 16);
+            let r = (num >> 16) + amt;
+
+            if (r > 255) r = 255;
+            else if (r < 0) r = 0;
+
+            let b = ((num >> 8) & 0x00FF) + amt;
+
+            if (b > 255) b = 255;
+            else if (b < 0) b = 0;
+
+            let g = (num & 0x0000FF) + amt;
+
+            if (g > 255) g = 255;
+            else if (g < 0) g = 0;
+            return (usePound ? '#' : '') + (g | (b << 8) | (r << 16)).toString(16);
+        },
+    },
+};
 </script>
 <style lang="less">
 .menu-animate {
@@ -199,11 +200,9 @@ name:'quickMenu',
     -moz-transition: all 1s ease;
     transition: all 1s ease;
     .core-menu {
-      width: 100%;
-      height: 100%;
       position: absolute;
-      left: 0px;
-      top: 0px;
+      left: 0;
+      top: 0;
       width: 60px;
       height: 60px;
       -webkit-transform: rotate(180deg);
@@ -239,7 +238,7 @@ name:'quickMenu',
           height: 3px;
           background: #fff;
           position: absolute;
-          left: 0px;
+          left: 0;
           -webkit-transform-origin: 0% 50%;
           -moz-transform-origin: 0% 50%;
           -ms-transform-origin: 0% 50%;
@@ -324,7 +323,7 @@ name:'quickMenu',
                 -ms-transform: rotate(-450deg);
                 -o-transform: rotate(-450deg);
                 transform: rotate(-450deg);
-                margin-top: 0px;
+                margin-top: 0;
               }
           &:after{
             opacity: 0;

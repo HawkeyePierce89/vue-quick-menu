@@ -1,5 +1,6 @@
 .DS_Store
 node_modules/
+dist/
 
 # Editor directories and files
 .idea
@@ -7,9 +8,3 @@ node_modules/
 *.ntvs*
 *.njsproj
 *.sln
-
-
-.babelrc
-
-
-README.md
