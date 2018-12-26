@@ -2,6 +2,8 @@ export default {
     render() {
         return (
             <div class={'quick-menu'} ref={'quickMenu'} style={this.quickMenuStyle}>
+                <div class={'quick-menu__backlayer'} style={this.backlayer} />
+
                 {this.items.map((item, index) => (<div class={'sub-menu'} style={this.getSubMenu(index)} ref={'icon'} refInFor={true}>
                     {item}
                 </div>))}
@@ -29,6 +31,11 @@ export default {
     computed: {
         menuCount() {
             return this.items.length;
+        },
+        backlayer() {
+            return {
+                borderBottom: `1px solid ${this.backgroundColor}`,
+            };
         },
         quickMenuStyle() {
             const topPosition = { top: '30px' };
